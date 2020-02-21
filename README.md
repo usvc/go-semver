@@ -1,5 +1,8 @@
 # Semver
 
+[![pipeline status](https://gitlab.com/usvc/modules/go/semver/badges/master/pipeline.svg)](https://gitlab.com/usvc/modules/go/semver/-/commits/master)
+
+
 A package to deal with semantic versions as defined at [https://semver.org](https://semver.org).
 
 ## Usage
