@@ -43,6 +43,26 @@ fmt.Println(version.String())
 // v1.2.3-alpha.1+202022022637
 ```
 
+### Sorting semantic versions
+
+```go
+stringVersions := []string{"1.2.1", "3.1.0", "2.0.0", "1.0.0", "2.0.0-alpha"}
+semverVersions := semver.Semvers{}
+for i := 0; i < len(stringVersions); i++ {
+  semverVersion, _ := semver.Parse(stringVersions[i])
+  semverVersions = append(semverVersions, *semverVersion)
+}
+sort.Sort(semverVersions)
+for i := 0; i < len(semverVersions); i++ {
+  fmt.Println(semverVersions[i].String())
+}
+// 1.0.0
+// 1.2.1
+// 2.0.0-alpha
+// 2.0.0
+// 3.1.0
+```
+
 ## Development Runbook
 
 ### Getting Started
