@@ -5,9 +5,9 @@ import "fmt"
 // VersionCore represents the major, minor, and patch
 // versions section of a semantic version
 type VersionCore struct {
-	Major uint
-	Minor uint
-	Patch uint
+	Major uint `json:"major"`
+	Minor uint `json:"minor"`
+	Patch uint `json:"patch"`
 }
 
 // String returns the string representation of the VersionCore structure

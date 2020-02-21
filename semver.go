@@ -9,10 +9,51 @@ import (
 // Semver stores information about a semantic version as
 // defined at https://semver.org
 type Semver struct {
-	Prefix        string
-	VersionCore   VersionCore
-	PreRelease    PreRelease
-	BuildMetadata BuildMetadata
+	Prefix        string        `json:"prefix"`
+	VersionCore   VersionCore   `json:"version_core"`
+	PreRelease    PreRelease    `json:"pre_release"`
+	BuildMetadata BuildMetadata `json:"build_metadata"`
+}
+
+// BumpMajor bumps the major version
+func (semver *Semver) BumpMajor() {
+	semver.VersionCore.Major++
+}
+
+// BumpMinor bumps the minor version
+func (semver *Semver) BumpMinor() {
+	semver.VersionCore.Minor++
+}
+
+// BumpPatch bumps the patch version
+func (semver *Semver) BumpPatch() {
+	semver.VersionCore.Patch++
+}
+
+// BumpPreRelease bumps the pre-release version if applicable,
+// if pre-release does not have a numerical version, returns
+// an error
+func (semver *Semver) BumpPreRelease() error {
+	preReleaseVersionString := semver.PreRelease[len(semver.PreRelease)-1]
+	preReleaseVersion, err := strconv.ParseUint(preReleaseVersionString, parseDecimal, parse32bit)
+	if err != nil {
+		return err
+	}
+	preReleaseVersion++
+	semver.PreRelease[len(semver.PreRelease)-1] = strconv.Itoa(int(preReleaseVersion))
+	return nil
+}
+
+// SetPreRelease sets the pre-release section of the
+// semantic version
+func (semver *Semver) SetPreRelease(labels ...string) {
+	semver.PreRelease = PreRelease(labels)
+}
+
+// SetBuildMetadata sets the build-metadata section of the
+// semantic version
+func (semver *Semver) SetBuildMetadata(labels ...string) {
+	semver.BuildMetadata = BuildMetadata(labels)
 }
 
 // String returns the string representation of this instance of
