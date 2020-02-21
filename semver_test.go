@@ -1,7 +1,9 @@
 package semver
 
 import (
+	"fmt"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/suite"
 )
@@ -12,6 +14,12 @@ type SemverTests struct {
 
 func TestSemver(t *testing.T) {
 	suite.Run(t, &SemverTests{})
+}
+
+func (s *SemverTests) TestString() {
+	timestamp := time.Now().Format(time.RFC3339)
+	semver := Semver{"v", VersionCore{1, 2, 3}, PreRelease{"alpha", "4"}, BuildMetadata{timestamp}}
+	s.Equal(fmt.Sprintf("v1.2.3-alpha.4+%s", timestamp), semver.String())
 }
 
 func (s *SemverTests) TestParse_basic() {
@@ -61,7 +69,7 @@ func (s *SemverTests) TestParse_withMultiBuildMetadata() {
 	s.EqualValues(1, semver.VersionCore.Major)
 	s.EqualValues(2, semver.VersionCore.Minor)
 	s.EqualValues(3, semver.VersionCore.Patch)
-	s.Equal("buildmeta0.buildmeta1.buildmeta2", semver.BuildMetadata.String())
+	s.EqualValues([]string{"buildmeta0", "buildmeta1", "buildmeta2"}, semver.BuildMetadata)
 }
 
 func (s *SemverTests) TestParse_full() {
@@ -70,6 +78,6 @@ func (s *SemverTests) TestParse_full() {
 	s.EqualValues(1, semver.VersionCore.Major)
 	s.EqualValues(2, semver.VersionCore.Minor)
 	s.EqualValues(3, semver.VersionCore.Patch)
-	s.Equal("prerel0.prerel1", semver.PreRelease.String())
-	s.Equal("build0.build1", semver.BuildMetadata.String())
+	s.EqualValues([]string{"prerel0", "prerel1"}, semver.PreRelease)
+	s.EqualValues([]string{"build0", "build1"}, semver.BuildMetadata)
 }

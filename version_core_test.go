@@ -4,7 +4,6 @@ import (
 	"sort"
 	"testing"
 
-	"github.com/sanity-io/litter"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -14,6 +13,11 @@ type VersionCoreTests struct {
 
 func TestVersionCore(t *testing.T) {
 	suite.Run(t, &VersionCoreTests{})
+}
+
+func (s *VersionCoreTests) TestString() {
+	versionCore := VersionCore{1, 2, 3}
+	s.Equal("1.2.3", versionCore.String())
 }
 
 func (s *VersionCoreTests) TestSorting() {
@@ -33,5 +37,4 @@ func (s *VersionCoreTests) TestSorting() {
 		{0, 0, 1},
 	}
 	sort.Sort(vcs)
-	litter.Dump(vcs)
 }

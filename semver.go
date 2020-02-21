@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+// Semver stores information about a semantic version as
+// defined at https://semver.org
 type Semver struct {
 	Prefix        string
 	VersionCore   VersionCore
@@ -13,6 +15,8 @@ type Semver struct {
 	BuildMetadata BuildMetadata
 }
 
+// String returns the string representation of this instance of
+// the Semver struct
 func (semver Semver) String() string {
 	builder := strings.Builder{}
 	if len(semver.Prefix) > 0 {
@@ -30,11 +34,10 @@ func (semver Semver) String() string {
 	return builder.String()
 }
 
-// Parse receives a string and returns a Semver structure that represents
-// the string
+// Parse receives a string and returns a Semver instance that
+// represents the semantic version
 func Parse(semver string) *Semver {
-	// regex adapted from https://semver.org/
-	matcher := regexp.MustCompile(`(?:(?P<Prefix>[vV]))?(?P<Major>0|[1-9]\d*)\.(?P<Minor>0|[1-9]\d*)\.(?P<Patch>0|[1-9]\d*)(?:-(?P<PreRelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<BuildMetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$`)
+	matcher := regexp.MustCompile(RegexpWithCaptureGroup)
 	matchMap := map[string]string{}
 	subexpNames := matcher.SubexpNames()
 	submatches := matcher.FindStringSubmatch(semver)
@@ -46,12 +49,12 @@ func Parse(semver string) *Semver {
 		retval.Prefix = val
 	}
 	if val, ok := matchMap["Major"]; ok {
-		if majorVersion, err := strconv.ParseUint(val, 10, 8); err == nil {
+		if majorVersion, err := strconv.ParseUint(val, parseDecimal, parse32bit); err == nil {
 			retval.VersionCore.Major = uint(majorVersion)
 		}
 	}
 	if val, ok := matchMap["Minor"]; ok {
-		if minorVersion, err := strconv.ParseUint(val, 10, 8); err == nil {
+		if minorVersion, err := strconv.ParseUint(val, parseDecimal, parse32bit); err == nil {
 			retval.VersionCore.Minor = uint(minorVersion)
 		}
 	}
@@ -61,10 +64,10 @@ func Parse(semver string) *Semver {
 		}
 	}
 	if val, ok := matchMap["PreRelease"]; ok && len(val) > 0 {
-		retval.PreRelease = []string{val}
+		retval.PreRelease = strings.Split(val, ".")
 	}
 	if val, ok := matchMap["BuildMetadata"]; ok && len(val) > 0 {
-		retval.BuildMetadata = []string{val}
+		retval.BuildMetadata = strings.Split(val, ".")
 	}
 	return retval
 }
