@@ -2,8 +2,18 @@
 
 [![pipeline status](https://gitlab.com/usvc/modules/go/semver/badges/master/pipeline.svg)](https://gitlab.com/usvc/modules/go/semver/-/commits/master)
 
-
 A Go package to deal with semantic versions as defined at [https://semver.org](https://semver.org).
+
+- [Semver](#semver)
+  - [Usage](#usage)
+    - [Importing](#importing)
+    - [Parsing a semantic version string](#parsing-a-semantic-version-string)
+    - [Retrieving semantic version as a string](#retrieving-semantic-version-as-a-string)
+    - [Sorting semantic versions](#sorting-semantic-versions)
+  - [Development Runbook](#development-runbook)
+    - [Getting Started](#getting-started)
+    - [Continuous Integration (CI) Pipeline](#continuous-integration-ci-pipeline)
+  - [Licensing](#licensing)
 
 ## Usage
 
