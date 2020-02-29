@@ -29,15 +29,19 @@ build_production:
 	ln -s $$(pwd)/bin/$(CMD_ROOT)_$$(go env GOOS)_$$(go env GOARCH)${BIN_EXT} \
 		./bin/$(CMD_ROOT)
 
-package:
+image:
 	docker build --file ./deploy/Dockerfile --tag $(DOCKER_NAMESPACE)/$(DOCKER_IMAGE_NAME):latest .
 save:
 	mkdir -p ./build
-	docker save --output ./build/${PROJECT_NAME}.tar.gz $(DOCKER_NAMESPACE)/$(DOCKER_IMAGE_NAME):latest
+	docker save --output ./build/$(PROJECT_NAME).tar.gz $(DOCKER_NAMESPACE)/$(DOCKER_IMAGE_NAME):latest
 load:
-	docker load --input ./build/${PROJECT_NAME}.tar.gz
-publish_dockerhub:
+	docker load --input ./build/$(PROJECT_NAME).tar.gz
+dockerhub:
 	docker push $(DOCKER_NAMESPACE)/$(DOCKER_IMAGE_NAME):latest
+	git fetch
+	docker tag $(DOCKER_NAMESPACE)/$(DOCKER_IMAGE_NAME):latest \
+		$(DOCKER_NAMESPACE)/$(DOCKER_IMAGE_NAME):$$(git describe --tag $$(git rev-list --tags --max-count=1))
+	docker push $(DOCKER_NAMESPACE)/$(DOCKER_IMAGE_NAME):$$(git describe --tag $$(git rev-list --tags --max-count=1))
 
 see_ci:
 	xdg-open https://gitlab.com/usvc/modules/go/semver/pipelines

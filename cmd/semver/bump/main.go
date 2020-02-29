@@ -11,7 +11,7 @@ var (
 )
 
 func main(command *cobra.Command, args []string) {
-	log.Info("hello")
+	log.Info("TODO")
 }
 
 func GetCommand() *cobra.Command {
