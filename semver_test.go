@@ -16,6 +16,69 @@ func TestSemver(t *testing.T) {
 	suite.Run(t, &SemverTests{})
 }
 
+func (s *SemverTests) TestSemverBumpMajor() {
+	v := Semver{
+		VersionCore: VersionCore{
+			Major: 1,
+		},
+	}
+	v.BumpMajor()
+	s.Equal(uint(2), v.VersionCore.Major)
+}
+
+func (s *SemverTests) TestSemverBumpMinor() {
+	v := Semver{
+		VersionCore: VersionCore{
+			Minor: 1,
+		},
+	}
+	v.BumpMinor()
+	s.Equal(uint(2), v.VersionCore.Minor)
+}
+
+func (s *SemverTests) TestSemverBumpPatch() {
+	v := Semver{
+		VersionCore: VersionCore{
+			Patch: 1,
+		},
+	}
+	v.BumpPatch()
+	s.Equal(uint(2), v.VersionCore.Patch)
+}
+
+func (s *SemverTests) TestSemverBumpPreRelease() {
+	v := Semver{
+		PreRelease: []string{
+			"pr",
+			"1",
+		},
+	}
+	s.Nil(v.BumpPreRelease())
+	s.Equal("0.0.0-pr.2", v.String())
+}
+
+func (s *SemverTests) TestSemverBumpPreRelease_lastNotNumber() {
+	v := Semver{
+		PreRelease: []string{
+			"pr",
+		},
+	}
+	s.NotNil(v.BumpPreRelease())
+	s.Equal("0.0.0-pr", v.String())
+}
+
+func (s *SemverTests) TestSemverSetPreRelease() {
+	v := Semver{}
+	v.SetPreRelease("a", "b")
+	s.Equal("0.0.0-a.b", v.String())
+}
+
+func (s *SemverTests) TestSemverSetBuildMetadata() {
+	v := Semver{}
+	v.SetBuildMetadata("a", "b")
+	s.Equal("0.0.0+a.b", v.String())
+}
+
 func (s *SemverTests) TestString() {
 	timestamp := time.Now().Format(time.RFC3339)
 	semver := Semver{"v", VersionCore{1, 2, 3}, PreRelease{"alpha", "4"}, BuildMetadata{timestamp}}
