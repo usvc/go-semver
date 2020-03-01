@@ -1,7 +1,7 @@
 PROJECT_NAME=semver
 CMD_ROOT=semver
-DOCKER_NAMESPACE=docker.io
-DOCKER_IMAGE_NAME=$(PROJECT_NAME)
+DOCKER_NAMESPACE=usvc
+DOCKER_IMAGE_NAME=libeg-semver
 
 -include ./makefile.properties
 
@@ -25,12 +25,25 @@ build_production:
 			-s -w" \
 		-o ./bin/$(CMD_ROOT)_$$(go env GOOS)_$$(go env GOARCH)${BIN_EXT} \
 		./cmd/$(CMD_ROOT)
-	rm -rf ./bin/$(CMD_ROOT)
-	ln -s $$(pwd)/bin/$(CMD_ROOT)_$$(go env GOOS)_$$(go env GOARCH)${BIN_EXT} \
-		./bin/$(CMD_ROOT)
+compress_production:
+	ls -lah ./bin/$(CMD_ROOT)_$$(go env GOOS)_$$(go env GOARCH)${BIN_EXT}
+	upx -9 -v -o ./bin/.$(CMD_ROOT)_$$(go env GOOS)_$$(go env GOARCH)${BIN_EXT} \
+		./bin/$(CMD_ROOT)_$$(go env GOOS)_$$(go env GOARCH)${BIN_EXT}
+	upx -t ./bin/.$(CMD_ROOT)_$$(go env GOOS)_$$(go env GOARCH)${BIN_EXT}
+	rm -rf ./bin/$(CMD_ROOT)_$$(go env GOOS)_$$(go env GOARCH)${BIN_EXT}
+	mv ./bin/.$(CMD_ROOT)_$$(go env GOOS)_$$(go env GOARCH)${BIN_EXT} \
+		./bin/$(CMD_ROOT)_$$(go env GOOS)_$$(go env GOARCH)${BIN_EXT}
+	ls -lah ./bin/$(CMD_ROOT)_$$(go env GOOS)_$$(go env GOARCH)${BIN_EXT}
 
 image:
-	docker build --file ./deploy/Dockerfile --tag $(DOCKER_NAMESPACE)/$(DOCKER_IMAGE_NAME):latest .
+	docker build \
+		--file ./deploy/Dockerfile \
+		--tag $(DOCKER_NAMESPACE)/$(DOCKER_IMAGE_NAME):latest \
+		.
+test_image:
+	container-structure-test test \
+		--config ./deploy/Dockerfile.yaml \
+		--image $(DOCKER_NAMESPACE)/$(DOCKER_IMAGE_NAME):latest
 save:
 	mkdir -p ./build
 	docker save --output ./build/$(PROJECT_NAME).tar.gz $(DOCKER_NAMESPACE)/$(DOCKER_IMAGE_NAME):latest

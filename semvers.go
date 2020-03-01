@@ -1,7 +1,7 @@
 package semver
 
 // Semvers is a slice of Semver structures with sorting capabilities
-type Semvers []Semver
+type Semvers []*Semver
 
 // Len implements sort.Interface's Len()
 func (semvers Semvers) Len() int { return len(semvers) }

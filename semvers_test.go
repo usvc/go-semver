@@ -37,10 +37,10 @@ func (s *SemversTests) assertEqual(
 
 func (s *SemversTests) TestSorting_majorVersion() {
 	semvers := Semvers{
-		*Parse("10.0.0"),
-		*Parse("3.0.0"),
-		*Parse("2.0.0"),
-		*Parse("1.0.0"),
+		Parse("10.0.0"),
+		Parse("3.0.0"),
+		Parse("2.0.0"),
+		Parse("1.0.0"),
 	}
 	sort.Sort(semvers)
 	s.assertEqual([]string{"1.0.0", "2.0.0", "3.0.0", "10.0.0"}, semvers)
@@ -48,10 +48,10 @@ func (s *SemversTests) TestSorting_majorVersion() {
 
 func (s *SemversTests) TestSorting_minorVersion() {
 	semvers := Semvers{
-		*Parse("0.10.0"),
-		*Parse("0.3.0"),
-		*Parse("0.2.0"),
-		*Parse("0.1.0"),
+		Parse("0.10.0"),
+		Parse("0.3.0"),
+		Parse("0.2.0"),
+		Parse("0.1.0"),
 	}
 	sort.Sort(semvers)
 	s.assertEqual([]string{"0.1.0", "0.2.0", "0.3.0", "0.10.0"}, semvers)
@@ -59,10 +59,10 @@ func (s *SemversTests) TestSorting_minorVersion() {
 
 func (s *SemversTests) TestSorting_patchVersion() {
 	semvers := Semvers{
-		*Parse("0.0.10"),
-		*Parse("0.0.3"),
-		*Parse("0.0.2"),
-		*Parse("0.0.1"),
+		Parse("0.0.10"),
+		Parse("0.0.3"),
+		Parse("0.0.2"),
+		Parse("0.0.1"),
 	}
 	sort.Sort(semvers)
 	s.assertEqual([]string{"0.0.1", "0.0.2", "0.0.3", "0.0.10"}, semvers)
@@ -70,11 +70,11 @@ func (s *SemversTests) TestSorting_patchVersion() {
 
 func (s *SemversTests) TestSorting_preRelease() {
 	semvers := Semvers{
-		*Parse("1.0.0"),
-		*Parse("1.0.0-alpha.10"),
-		*Parse("1.0.0-alpha.1"),
-		*Parse("1.0.0-alpha"),
-		*Parse("1.0.0-beta.1"),
+		Parse("1.0.0"),
+		Parse("1.0.0-alpha.10"),
+		Parse("1.0.0-alpha.1"),
+		Parse("1.0.0-alpha"),
+		Parse("1.0.0-beta.1"),
 	}
 	sort.Sort(semvers)
 	s.assertEqual([]string{"1.0.0-alpha.1", "1.0.0-alpha.10", "1.0.0-alpha", "1.0.0-beta.1", "1.0.0"}, semvers)

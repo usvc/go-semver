@@ -1,12 +1,17 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
 	"github.com/usvc/semver/cmd/semver/bump"
 )
 
 var (
-	cmd *cobra.Command
+	Version   string
+	Commit    string
+	Timestamp string
+	cmd       *cobra.Command
 )
 
 func run(command *cobra.Command, args []string) {
@@ -15,8 +20,9 @@ func run(command *cobra.Command, args []string) {
 
 func main() {
 	cmd = &cobra.Command{
-		Use: "semver",
-		Run: run,
+		Use:     "semver",
+		Version: fmt.Sprintf("%s-%s %s", Version, Commit, Timestamp),
+		Run:     run,
 	}
 	cmd.AddCommand(bump.GetCommand())
 	cmd.Execute()
