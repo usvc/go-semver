@@ -2,15 +2,11 @@ package bump
 
 import (
 	"os"
-	"sort"
-	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/usvc/config"
 	"github.com/usvc/logger"
 	"github.com/usvc/semver"
-	"gopkg.in/src-d/go-git.v4"
-	"gopkg.in/src-d/go-git.v4/plumbing"
 )
 
 var (
@@ -27,47 +23,34 @@ var (
 )
 
 func run(command *cobra.Command, args []string) {
+	hasArguments := (len(args) > 0)
+	retrieveFromGit := conf.GetBool("git")
 	var version *semver.Semver
-	if conf.GetBool("git") {
+	var err error
+
+	switch true {
+	case retrieveFromGit:
 		currentDirectory, err := os.Getwd()
 		if err != nil {
-			log.Errorf("failed to getting current working directory: '%s'", err)
+			log.Errorf("failed to get current working directory: '%s'", err)
 			os.Exit(1)
 		}
-		repository, err := git.PlainOpen(currentDirectory)
+		version, err = getLatestSemverFromGitRepository(currentDirectory)
 		if err != nil {
-			log.Errorf("failed to open the directory '%s' as a git repository: '%s'", currentDirectory, err)
+			log.Errorf("failed to retrieve latest semver tag: '%s'", err)
 			os.Exit(1)
 		}
-		tags, err := repository.Tags()
+	case hasArguments:
+		version, err = getSemverFromArguments(args)
 		if err != nil {
-			log.Errorf("failed to get tags from git repository at '%s': '%s'", currentDirectory, err)
+			log.Errorf("failed to parse semver input from arguments: '%s'", err)
 			os.Exit(1)
 		}
-		var versions semver.Semvers
-		tags.ForEach(func(tag *plumbing.Reference) error {
-			tagName := tag.Name().Short()
-			if semver.IsValid(tagName) {
-				versions = append(versions, semver.Parse(tagName))
-			}
-			return nil
-		})
-		sort.Sort(versions)
-		log.Tracef("retrieved tags: %v", versions)
-		version = versions[versions.Len()-1]
-		log.Debugf("using version from git tags: '%s'", version)
-	} else if len(args) == 0 {
+	default:
 		command.Help()
 		return
-	} else {
-		versionFromArguments := strings.Join(args, ".")
-		if !semver.IsValid(versionFromArguments) {
-			log.Errorf("parsed input '%s' is not a valid semver string", versionFromArguments)
-			os.Exit(1)
-		}
-		version = semver.Parse(versionFromArguments)
-		log.Debugf("using version from provided input: '%s'", version)
 	}
+
 	log.Debugf("current version: '%s'", version)
 	switch true {
 	case conf.GetBool("major"):
@@ -91,37 +74,24 @@ func run(command *cobra.Command, args []string) {
 			log.Errorf("failed to getting current working directory: '%s'", err)
 			os.Exit(1)
 		}
-		repository, err := git.PlainOpen(currentDirectory)
+		err = tagCurrentGitCommit(version.String(), currentDirectory)
 		if err != nil {
-			log.Errorf("failed to open the directory '%s' as a git repository: '%s'", currentDirectory, err)
+			log.Errorf("failed to add tag '%s' to repository at '%s': '%s'", version.String, currentDirectory, err)
 			os.Exit(1)
 		}
-
-		head, err := repository.Head()
-		if err != nil {
-			log.Errorf("failed to get HEAD of git repository: '%s'", err)
-			os.Exit(1)
-		}
-		headCommitHash := head.Hash()
-		repository.CreateTag(version.String(), headCommitHash, nil)
-
-		log.Infof("added git tag '%s' to repository at HEAD '%s'", version.String(), headCommitHash.String())
+		log.Infof("added tag '%s' to repository at '%s'", version.String, currentDirectory)
 	}
 }
 
 func GetCommand() *cobra.Command {
 	if cmd == nil {
-		initialize()
+		log = logger.New(logger.Options{})
+		conf.LoadFromEnvironment()
+		cmd = &cobra.Command{
+			Use: "bump",
+			Run: run,
+		}
+		conf.ApplyToCobra(cmd)
 	}
 	return cmd
-}
-
-func initialize() {
-	log = logger.New(logger.Options{})
-	conf.LoadFromEnvironment()
-	cmd = &cobra.Command{
-		Use: "bump",
-		Run: run,
-	}
-	conf.ApplyToCobra(cmd)
 }
