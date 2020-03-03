@@ -1,4 +1,4 @@
-module github.com/usvc/semver
+module github.com/usvc/go-semver
 
 go 1.13
 

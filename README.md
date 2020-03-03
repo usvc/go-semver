@@ -1,6 +1,6 @@
 # Semver
 
-[![release github](https://img.shields.io/github/v/release/usvc/semver?sort=semver)](https://github.com/usvc/semver)
+[![release github](https://img.shields.io/github/v/release/usvc/semver?sort=semver)](https://github.com/usvc/go-semver)
 
 [![pipeline status](https://gitlab.com/usvc/modules/go/semver/badges/master/pipeline.svg)](https://gitlab.com/usvc/modules/go/semver/-/commits/master)
 [![Build Status](https://travis-ci.org/usvc/semver.svg?branch=master)](https://travis-ci.org/usvc/semver)
@@ -28,7 +28,7 @@ A Go package to deal with semantic versions as defined at [https://semver.org](h
 ### Importing
 
 ```go
-import "github.com/usvc/semver"
+import "github.com/usvc/go-semver"
 ```
 
 ### Parsing a semantic version string

@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/usvc/semver/cmd/semver/bump"
+	"github.com/usvc/go-semver/cmd/semver/bump"
 )
 
 var (

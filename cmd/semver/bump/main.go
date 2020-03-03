@@ -5,8 +5,8 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/usvc/config"
+	"github.com/usvc/go-semver"
 	"github.com/usvc/logger"
-	"github.com/usvc/semver"
 )
 
 var (

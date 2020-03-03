@@ -5,7 +5,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/usvc/semver"
+	"github.com/usvc/go-semver"
 	"gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/plumbing"
 )
