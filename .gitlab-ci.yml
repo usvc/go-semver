@@ -70,8 +70,7 @@ build windows:
 
 version bump:
   stage: release
-  only:
-    - master
+  only: ["master"]
   image: usvc/semver:gitlab-latest
   before_script:
     - apk update && apk upgrade
@@ -97,7 +96,6 @@ compress:
   allow_failure: true
   dependencies: ["build linux", "build macos", "build windows"]
   artifacts:
-    expire_in: 1 day
     paths: ["./bin/*"]
   before_script:
     - apt-get update && apt-get upgrade -y
@@ -123,13 +121,10 @@ dockerize:
 
 dockerhub:
   stage: publish
-  services:
-    - docker:19.03.1-dind
+  services: ["docker:19.03.1-dind"]
   image: docker:19.03.1
-  dependencies:
-    - dockerize
-  only:
-    - tags
+  dependencies: ["dockerize"]
+  only: ["tags"]
   before_script:
     - apk add git jq make
     - docker login ${DOCKER_REGISTRY_URL:-docker.io} -u ${DOCKER_REGISTRY_USERNAME} -p ${DOCKER_REGISTRY_PASSWORD}
