@@ -1,8 +1,7 @@
 image: golang:1.14
 stages:
   - init
-  - test
-  - build
+  - test & build
   - release
   - package
   - publish
@@ -18,7 +17,7 @@ init:
   script: ["entrypoint"]
 
 unit test:
-  stage: test
+  stage: test & build
   image: usvc/ci:go-test
   dependencies: ["init"]
   artifacts:
@@ -27,6 +26,7 @@ unit test:
 
 .build:
   image: usvc/ci:go-build-production
+  stage: test & build
   dependencies: ["init"]
   artifacts:
     paths: ["./bin/*"]
@@ -39,39 +39,33 @@ unit test:
   variables:
     GOOS: linux
     GOARCH: amd64
+build linux (test):
+  extends: .build_linux
+  only: ["master"]
+build linux:
+  extends: .build_linux
+  only: ["tags"]
 .build_macos:
   extends: .build
   variables:
     GOOS: darwin
     GOARCH: amd64
+build macos (test):
+  extends: .build_macos
+  only: ["master"]
+build macos:
+  extends: .build_macos
+  only: ["tags"]
 .build_windows:
   extends: .build
   variables:
     GOOS: windows
     GOARCH: "386"
-build linux (test):
-  extends: .build_linux
-  stage: test
-  only: ["master"]
-build macos (test):
-  extends: .build_macos
-  stage: test
-  only: ["master"]
 build windows (test):
   extends: .build_windows
-  stage: test
   only: ["master"]
-build linux:
-  extends: .build_linux
-  stage: build
-  only: ["tags"]
-build macos:
-  extends: .build_macos
-  stage: build
-  only: ["tags"]
 build windows:
   extends: .build_windows
-  stage: build
   only: ["tags"]
 
 version bump:

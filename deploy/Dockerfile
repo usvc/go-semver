@@ -9,5 +9,6 @@ RUN make build_production
 RUN make compress_production
 
 FROM gcr.io/distroless/base-debian10
-COPY --from=builder /app/bin/semver_linux_amd64 /app
-ENTRYPOINT ["/app"]
+ENV PATH=/bin
+COPY --from=builder /app/bin/semver_linux_amd64 /bin/semver
+ENTRYPOINT ["/bin/semver"]

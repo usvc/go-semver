@@ -1,0 +1,5 @@
+.dockerignore
+.ssh
+bin
+deploy
+./*.yml
