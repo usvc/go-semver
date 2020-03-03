@@ -31,7 +31,7 @@ unit test:
   artifacts:
     paths: ["./bin/*"]
   variables:
-    CMD_ROOT: semver
+    BIN_NAME: semver
   before_script: ["git fetch"]
   script: ["entrypoint"]
 .build_linux:
@@ -113,24 +113,14 @@ dockerize:
   artifacts:
     paths: ["./build/*"]
   variables:
-    IMAGE_URL: usvc/libeg-config:latest
-    OUTPUT_PATH: ./build/config.tar.gz
-  script:
-    - mkdir -p ./build
-    - entrypoint
+    DOCKER_IMAGE_URL: usvc/semver
+    DOCKER_IMAGE_TAG: latest
+  script: ["entrypoint"]
 
 dockerhub:
   stage: publish
-  services: ["docker:19.03.1-dind"]
-  image: docker:19.03.1
-  dependencies: ["dockerize"]
   only: ["tags"]
-  before_script:
-    - apk add git jq make
-    - docker login ${DOCKER_REGISTRY_URL:-docker.io} -u ${DOCKER_REGISTRY_USERNAME} -p ${DOCKER_REGISTRY_PASSWORD}
-  script:
-    - make load
-    - make dockerhub
-  after_script:
-    - docker logout
-    - rm -rf ~/.docker/config.json
+  services: ["docker:19.03.1-dind"]
+  image: usvc/ci:docker-publish
+  dependencies: ["dockerize"]
+  script: ["entrypoint"]
