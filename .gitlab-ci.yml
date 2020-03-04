@@ -113,8 +113,7 @@ dockerize:
   artifacts:
     paths: ["./build/*"]
   variables:
-    DOCKER_IMAGE_URL: usvc/semver
-    DOCKER_IMAGE_TAG: latest
+    DOCKER_IMAGE_URL: usvc/go-semver
   script: ["entrypoint"]
 
 dockerhub:
@@ -123,4 +122,6 @@ dockerhub:
   services: ["docker:19.03.1-dind"]
   image: usvc/ci:docker-publish
   dependencies: ["dockerize"]
+  variables:
+    DOCKER_IMAGE_URL: usvc/go-semver
   script: ["entrypoint"]
