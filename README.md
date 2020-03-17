@@ -3,6 +3,8 @@
 [![latest release](https://badge.fury.io/gh/usvc%2Fgo-semver.svg)](https://github.com/usvc/go-semver/releases)
 [![pipeline status](https://gitlab.com/usvc/modules/go/semver/badges/master/pipeline.svg)](https://gitlab.com/usvc/modules/go/semver/-/commits/master)
 [![Build Status](https://travis-ci.org/usvc/go-semver.svg?branch=master)](https://travis-ci.org/usvc/go-semver)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/7812e899e2569dfab702/test_coverage)](https://codeclimate.com/github/usvc/go-semver/test_coverage)
+[![Maintainability](https://api.codeclimate.com/v1/badges/7812e899e2569dfab702/maintainability)](https://codeclimate.com/github/usvc/go-semver/maintainability)
 
 A Go package to deal with semantic versions as defined at [https://semver.org](https://semver.org).
 
